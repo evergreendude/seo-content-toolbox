@@ -323,7 +323,7 @@
     flex-wrap: wrap;
   }
 
-  .savage-btn {
+  .review-btn {
     flex: 1;
     min-width: 160px;
     padding: 8px 14px;
@@ -337,7 +337,7 @@
     transition: background 0.15s;
   }
 
-  .savage-btn:hover { background: var(--bg-secondary); }
+  .review-btn:hover { background: var(--bg-secondary); }
 
   .icon-row {
     display: flex;
@@ -638,7 +638,7 @@
         <div class="howto-body">
           <p>Paste a draft and it scores how well the writing is built for search engines <em>and</em> for AI/RAG pipelines. It has <strong>two separate actions</strong>:</p>
           <p><strong>Analyze</strong> — the structured pass. Rates keyword coverage against your primary/related keywords, checks readability, and breaks the text into <strong>chunks</strong> the way an embedding/RAG system would ingest it, so you can spot thin or off-topic sections. This is the objective, metric-driven report.</p>
-          <p><strong>🔥 Savage feedback</strong> — a different beast. Claude plays a harsh-but-brilliant editor and gives blunt, spicy, no-softening critique (under 200 words) on whether the writing actually lands. Use it for a gut-check on quality and voice, <em>not</em> for scores. Think tough editor, not spreadsheet.</p>
+          <p><strong>Editorial Review</strong> — a different pass. Claude acts as an exacting editor and gives direct, candid, constructive feedback (under 200 words) on whether the writing actually lands — what to cut, tighten, or rethink. Use it for a qualitative gut-check on voice and clarity, <em>not</em> for scores.</p>
           <p><strong>Options:</strong> <span class="k">Target audience</span> tunes both passes to who you're writing for. <span class="k">Chunking strategy</span> controls how the text is split — <strong>Document</strong> (by headings), <strong>Fixed size</strong> (uniform word counts, best for embeddings), <strong>Semantic</strong> (by topic shift), or <strong>Paragraph</strong> — mirroring real RAG ingestion strategies.</p>
           <p style="color:var(--text-tertiary);">Uses your own Anthropic API key (entered once, stored only in this browser).</p>
         </div>
@@ -674,7 +674,7 @@
             <option>Executives</option>
             <option>Developers</option>
           </select>
-          <button class="savage-btn" onclick="getSavageFeedback()">🔥 Get savage feedback</button>
+          <button class="review-btn" onclick="getEditorialReview()"><i class="ti ti-writing" style="font-size:14px;"></i> Editorial review</button>
         </div>
       </div>
 
@@ -1184,29 +1184,29 @@
     area.innerHTML = html;
   }
 
-  async function getSavageFeedback() {
+  async function getEditorialReview() {
     const content = document.getElementById('content').value.trim();
     if (!content) { alert('Paste some content first.'); return; }
     const audience = document.getElementById('audience').value;
-    const btn = document.querySelector('.savage-btn');
-    btn.textContent = '🔥 Analyzing...';
+    const btn = document.querySelector('.review-btn');
+    btn.textContent = 'Reviewing…';
     btn.disabled = true;
     try {
       const result = await callClaude(
         [{ role:'user', content:
-          `Give brutally honest, savage but constructive feedback on this content for "${audience}". Be direct, a little spicy, but genuinely useful. Under 200 words. No softening.\n\nContent:\n${content.slice(0,3000)}`
+          `Give direct, honest editorial feedback on this content for "${audience}". Be candid and specific about what to improve and how — no softening, no filler. Under 200 words.\n\nContent:\n${content.slice(0,3000)}`
         }],
-        'You are a harsh but brilliant editor. Be direct and a bit savage, but always constructive and specific.'
+        'You are an experienced, exacting editor. Give direct, constructive editorial feedback: specific, honest, and genuinely useful, without hedging or padding.'
       );
       const area = document.getElementById('results-area');
       const existing = area.querySelector('.feedback-box');
       if (existing) existing.remove();
       const fb = document.createElement('div');
       fb.className = 'feedback-box';
-      fb.innerHTML = '<strong style="display:block;margin-bottom:8px;">🔥 Savage feedback</strong>' + escHtml(result);
+      fb.innerHTML = '<strong style="display:block;margin-bottom:8px;">Editorial review</strong>' + escHtml(result);
       area.prepend(fb);
-    } catch(e) { alert('Could not get feedback: ' + e.message); }
-    btn.textContent = '🔥 Get savage feedback';
+    } catch(e) { alert('Could not get review: ' + e.message); }
+    btn.textContent = 'Editorial review';
     btn.disabled = false;
   }
 

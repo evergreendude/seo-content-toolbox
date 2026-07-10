@@ -9,7 +9,7 @@ A small toolbox of SEO & content utilities — three focused tools behind one cl
 ## The tools
 
 ### 1 · Content Analyzer
-Scores a draft for SEO keyword coverage and readability, and breaks it into **chunks the way a RAG/embedding pipeline would ingest it** — so you catch thin or off-topic sections before publishing. It has two passes: a structured, metric-driven **Analyze**, and a separate **🔥 savage feedback** pass — a blunt, harsh-but-constructive editor critique for a gut-check on whether the writing actually lands.
+Scores a draft for SEO keyword coverage and readability, and breaks it into **chunks the way a RAG/embedding pipeline would ingest it** — so you catch thin or off-topic sections before publishing. It has two passes: a structured, metric-driven **Analyze**, and a separate **Editorial Review** pass — direct, candid editor feedback for a qualitative gut-check on whether the writing actually lands.
 
 ### 2 · SEO Audit
 A **heuristic** technical-SEO audit of any URL — indexability, metadata & head tags, structured data, performance signals, mobile/UX, and internationalization — returned as severity-ranked findings, each with a concrete fix. The same findings can be reframed for an SEO specialist, a developer, or a non-technical client.
