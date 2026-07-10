@@ -1,4 +1,6 @@
 .vercel
+.env
+.env.*
 
 # Internal WorkOS / ops docs — kept locally, never published to the public repo
 # (they contain the live URL, account IDs, deploy specifics, and interview notes)
