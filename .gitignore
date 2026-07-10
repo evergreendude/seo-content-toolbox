@@ -1,0 +1,11 @@
+.vercel
+
+# Internal WorkOS / ops docs — kept locally, never published to the public repo
+# (they contain the live URL, account IDs, deploy specifics, and interview notes)
+_overview.md
+DEPLOY.md
+TALKING-POINTS.md
+TOOLS.md
+
+# build artifacts
+assets/wrapper.html

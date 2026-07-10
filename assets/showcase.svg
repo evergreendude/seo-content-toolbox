@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="ui-monospace, 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0E1A2B"/>
+      <stop offset="1" stop-color="#0A1420"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F2B44E"/>
+      <stop offset="1" stop-color="#E9A23B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- backdrop -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <!-- faint dotted grid -->
+  <g fill="#1B2E45" opacity="0.5">
+    <!-- generated dot columns -->
+    <g>
+      <circle cx="80" cy="80" r="1.5"/><circle cx="180" cy="80" r="1.5"/><circle cx="280" cy="80" r="1.5"/><circle cx="380" cy="80" r="1.5"/><circle cx="480" cy="80" r="1.5"/><circle cx="580" cy="80" r="1.5"/><circle cx="680" cy="80" r="1.5"/><circle cx="780" cy="80" r="1.5"/><circle cx="880" cy="80" r="1.5"/><circle cx="980" cy="80" r="1.5"/><circle cx="1080" cy="80" r="1.5"/><circle cx="1180" cy="80" r="1.5"/><circle cx="1280" cy="80" r="1.5"/><circle cx="1380" cy="80" r="1.5"/><circle cx="1480" cy="80" r="1.5"/>
+    </g>
+  </g>
+
+  <!-- ── Header ── -->
+  <!-- [js] tile -->
+  <g transform="translate(80,74)">
+    <rect width="76" height="76" rx="18" fill="#0E1A2B" stroke="#0A66C2" stroke-opacity="0.4" stroke-width="2.5"/>
+    <text x="38" y="50" font-size="30" font-weight="700" letter-spacing="-1" text-anchor="middle"><tspan fill="#0A66C2">[</tspan><tspan fill="#E9A23B">js</tspan><tspan fill="#0A66C2">]</tspan></text>
+  </g>
+  <text x="176" y="108" font-size="42" font-weight="700" fill="#EAF1F8" letter-spacing="-0.5">Toolbox</text>
+  <text x="178" y="140" font-size="19" fill="#7E93A9" letter-spacing="0.5">SEO &amp; content tools · reads the signal in the SERPs</text>
+
+  <!-- dev pill -->
+  <g transform="translate(1210,86)">
+    <rect width="310" height="52" rx="26" fill="none" stroke="url(#amber)" stroke-width="1.5" stroke-opacity="0.8"/>
+    <circle cx="34" cy="26" r="6" fill="#E9A23B"/>
+    <text x="56" y="33" font-size="17" font-weight="600" fill="#F2B44E" letter-spacing="1.5">IN ACTIVE DEVELOPMENT</text>
+  </g>
+
+  <!-- ── Tool cards ── -->
+  <!-- card 1: Content Analyzer -->
+  <g transform="translate(80,250)">
+    <rect width="460" height="470" rx="20" fill="#14273C" stroke="#0A66C2" stroke-opacity="0.28" stroke-width="1.5"/>
+    <text x="40" y="66" font-size="14" fill="#6E86A0" letter-spacing="2">01</text>
+    <!-- icon: document -->
+    <g transform="translate(40,92)" stroke="url(#amber)" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M8 4 h34 l18 18 v50 a4 4 0 0 1 -4 4 H8 a4 4 0 0 1 -4 -4 V8 a4 4 0 0 1 4 -4 z"/>
+      <path d="M42 4 v18 h18" stroke-opacity="0.6"/>
+      <path d="M16 40 h32 M16 54 h32 M16 68 h20" stroke-width="3"/>
+    </g>
+    <text x="40" y="250" font-size="27" font-weight="700" fill="#EAF1F8">Content Analyzer</text>
+    <text x="40" y="286" font-size="17" fill="#93A7BC">Scores a draft for SEO keyword</text>
+    <text x="40" y="312" font-size="17" fill="#93A7BC">coverage + readability, and chunks</text>
+    <text x="40" y="338" font-size="17" fill="#93A7BC">it the way a RAG pipeline would.</text>
+    <g transform="translate(40,372)">
+      <rect width="200" height="34" rx="8" fill="#20374F"/>
+      <text x="16" y="23" font-size="14" fill="#F2B44E">🔥 savage feedback</text>
+    </g>
+    <text x="40" y="446" font-size="14" fill="#6E86A0">Claude · structured score + editor critique</text>
+  </g>
+
+  <!-- card 2: SEO Audit -->
+  <g transform="translate(570,250)">
+    <rect width="460" height="470" rx="20" fill="#14273C" stroke="#0A66C2" stroke-opacity="0.28" stroke-width="1.5"/>
+    <text x="40" y="66" font-size="14" fill="#6E86A0" letter-spacing="2">02</text>
+    <!-- icon: magnifier over bars -->
+    <g transform="translate(40,92)" stroke="url(#amber)" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M10 66 V44 M26 66 V30 M42 66 V50"/>
+      <circle cx="50" cy="26" r="18"/>
+      <path d="M63 39 l14 14"/>
+    </g>
+    <text x="40" y="250" font-size="27" font-weight="700" fill="#EAF1F8">SEO Audit</text>
+    <text x="40" y="286" font-size="17" fill="#93A7BC">Heuristic technical audit of any URL</text>
+    <text x="40" y="312" font-size="17" fill="#93A7BC">— indexability, metadata, schema,</text>
+    <text x="40" y="338" font-size="17" fill="#93A7BC">performance — severity-ranked.</text>
+    <g transform="translate(40,372)">
+      <rect width="230" height="34" rx="8" fill="#20374F"/>
+      <text x="16" y="23" font-size="14" fill="#F2B44E">SEO · dev · client views</text>
+    </g>
+    <text x="40" y="446" font-size="14" fill="#6E86A0">Same findings, reframed per audience</text>
+  </g>
+
+  <!-- card 3: Keyword Clustering -->
+  <g transform="translate(1060,250)">
+    <rect width="460" height="470" rx="20" fill="#14273C" stroke="#E9A23B" stroke-opacity="0.4" stroke-width="1.5"/>
+    <text x="40" y="66" font-size="14" fill="#6E86A0" letter-spacing="2">03 · flagship</text>
+    <!-- icon: cluster nodes -->
+    <g transform="translate(40,92)">
+      <g stroke="url(#amber)" stroke-width="3" fill="none">
+        <path d="M20 24 L52 16 M20 24 L50 52 M20 24 L18 60"/>
+      </g>
+      <circle cx="20" cy="24" r="9" fill="#E9A23B"/>
+      <circle cx="56" cy="14" r="6" fill="#0A66C2"/>
+      <circle cx="52" cy="54" r="6" fill="#0A66C2"/>
+      <circle cx="17" cy="62" r="6" fill="#0A66C2"/>
+    </g>
+    <text x="40" y="250" font-size="27" font-weight="700" fill="#EAF1F8">Keyword Clustering</text>
+    <text x="40" y="286" font-size="17" fill="#93A7BC">Groups keywords by real Google</text>
+    <text x="40" y="312" font-size="17" fill="#93A7BC">SERP overlap → tells you how many</text>
+    <text x="40" y="338" font-size="17" fill="#93A7BC">pages to write, not just keywords.</text>
+    <g transform="translate(40,372)">
+      <rect width="250" height="34" rx="8" fill="#20374F"/>
+      <text x="16" y="23" font-size="14" fill="#F2B44E">SERP-overlap · one page / cluster</text>
+    </g>
+    <text x="40" y="446" font-size="14" fill="#6E86A0">Live SERP data · reverse-engineered</text>
+  </g>
+
+  <!-- ── Footer ── -->
+  <text x="80" y="820" font-size="17" fill="#7E93A9">Built by Jeremy Starke</text>
+  <text x="80" y="848" font-size="15" fill="#556B82">Open-source · in active development &amp; refinement</text>
+  <g transform="translate(1400,800)">
+    <circle cx="20" cy="20" r="3" fill="#0A66C2"/><circle cx="40" cy="20" r="3" fill="#E9A23B"/><circle cx="60" cy="20" r="3" fill="#0A66C2"/>
+  </g>
+</svg>

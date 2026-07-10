@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>[js] Toolbox</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230E1A2B'/><rect x='3.5' y='3.5' width='57' height='57' rx='11.5' fill='none' stroke='%230A66C2' stroke-opacity='0.3' stroke-width='2'/><text x='32' y='41' font-family='monospace' font-size='23' font-weight='700' letter-spacing='-0.5' text-anchor='middle'><tspan fill='%230A66C2'>[</tspan><tspan fill='%23E9A23B'>js</tspan><tspan fill='%230A66C2'>]</tspan></text></svg>" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.5.0/dist/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #efefef;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555555;
+    --text-tertiary: #999999;
+    --border: rgba(0,0,0,0.12);
+    --border-strong: rgba(0,0,0,0.25);
+    --accent: #4B6EF5;
+    --accent-hover: #3a5ce0;
+    --success-bg: #eaf3de;
+    --success-text: #3B6D11;
+    --warning-bg: #faeeda;
+    --warning-text: #854F0B;
+    --danger-bg: #fcebeb;
+    --danger-text: #A32D2D;
+    --info-bg: #e6f1fb;
+    --info-text: #185FA5;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Dark palette, shared by (a) system preference when no manual choice and
+     (b) an explicit data-theme="dark" override. Attribute selector wins over
+     the media query, so a manual pick always beats the OS setting. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --bg-primary: #1e1e1e;
+      --bg-secondary: #2a2a2a;
+      --bg-tertiary: #333333;
+      --text-primary: #f0f0f0;
+      --text-secondary: #aaaaaa;
+      --text-tertiary: #666666;
+      --border: rgba(255,255,255,0.1);
+      --border-strong: rgba(255,255,255,0.25);
+      --success-bg: #173404;
+      --success-text: #C0DD97;
+      --warning-bg: #412402;
+      --warning-text: #FAC775;
+      --danger-bg: #501313;
+      --danger-text: #F7C1C1;
+      --info-bg: #042C53;
+      --info-text: #B5D4F4;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #2a2a2a;
+    --bg-tertiary: #333333;
+    --text-primary: #f0f0f0;
+    --text-secondary: #aaaaaa;
+    --text-tertiary: #666666;
+    --border: rgba(255,255,255,0.1);
+    --border-strong: rgba(255,255,255,0.25);
+    --success-bg: #173404;
+    --success-text: #C0DD97;
+    --warning-bg: #412402;
+    --warning-text: #FAC775;
+    --danger-bg: #501313;
+    --danger-text: #F7C1C1;
+    --info-bg: #042C53;
+    --info-text: #B5D4F4;
+  }
+  /* data-theme="light" needs no block: base :root is already the light palette,
+     and :root:not([data-theme]) stops system-dark from applying once a choice is set. */
+
+  body {
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    min-height: 100vh;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px;
+    background: var(--bg-primary);
+    border-bottom: 0.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 48px;
+  }
+
+  .topbar-logo {
+    width: 26px; height: 26px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 12px; font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .topbar-title { font-size: 14px; font-weight: 500; margin-right: 8px; }
+
+  /* Collapsible "How it works" help panel (per tool) */
+  .howto { margin-bottom: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-primary); }
+  .howto summary { cursor: pointer; padding: 10px 14px; font-size: 13px; font-weight: 500; color: var(--text-primary); list-style: none; display: flex; align-items: center; gap: 7px; }
+  .howto summary::-webkit-details-marker { display: none; }
+  .howto summary::before { content: '›'; font-size: 15px; color: var(--text-tertiary); transition: transform 0.15s; }
+  .howto[open] summary::before { transform: rotate(90deg); }
+  .howto[open] summary { border-bottom: 1px solid var(--border); }
+  .howto-body { padding: 12px 14px; font-size: 13px; line-height: 1.65; color: var(--text-secondary); }
+  .howto-body p { margin-bottom: 8px; }
+  .howto-body p:last-child { margin-bottom: 0; }
+  .howto-body strong { color: var(--text-primary); font-weight: 600; }
+  .howto-body .k { font-family: ui-monospace, Consolas, monospace; font-size: 12px; background: var(--bg-secondary); padding: 1px 5px; border-radius: 4px; color: var(--text-primary); }
+
+  .tab-bar {
+    display: flex;
+    gap: 2px;
+    height: 100%;
+    align-items: flex-end;
+  }
+
+  .tab {
+    padding: 0 14px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .tab:hover { color: var(--text-secondary); }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── Layout ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    padding: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* ── Form elements ── */
+  textarea, input[type="text"], input[type="url"], select {
+    width: 100%;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 9px 11px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    transition: border-color 0.15s;
+  }
+
+  textarea:focus, input[type="text"]:focus, input[type="url"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  textarea::placeholder, input::placeholder { color: var(--text-tertiary); }
+
+  #content { min-height: 300px; resize: vertical; line-height: 1.6; }
+
+  .label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .section { margin-bottom: 14px; }
+
+  /* ── Toggles ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+  }
+
+  .toggle {
+    width: 36px; height: 20px;
+    background: var(--accent);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle.off { background: var(--border-strong); }
+
+  .toggle-knob {
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px; left: 18px;
+    transition: left 0.2s;
+  }
+
+  .toggle.off .toggle-knob { left: 2px; }
+
+  /* ── Range ── */
+  .range-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .range-row span { font-size: 11px; color: var(--text-tertiary); }
+
+  input[type="range"] {
+    flex: 1;
+    height: 4px;
+    padding: 0;
+    border: none;
+    background: var(--border);
+    accent-color: var(--accent);
+  }
+
+  .range-val {
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 28px;
+    text-align: right;
+    color: var(--text-primary);
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s;
+    font-family: var(--font);
+  }
+
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-secondary {
+    padding: 5px 12px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-family: var(--font);
+    transition: background 0.15s;
+  }
+
+  .btn-secondary:hover { background: var(--bg-secondary); }
+
+  .word-count { font-size: 12px; color: var(--text-tertiary); }
+
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .savage-btn {
+    flex: 1;
+    min-width: 160px;
+    padding: 8px 14px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-family: var(--font);
+    transition: background 0.15s;
+  }
+
+  .savage-btn:hover { background: var(--bg-secondary); }
+
+  .icon-row {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    margin-top: 6px;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    font-size: 16px;
+    padding: 4px 6px;
+    border-radius: var(--radius-md);
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .icon-btn:hover { color: var(--text-primary); background: var(--bg-secondary); }
+
+  .suggest-btn {
+    font-size: 12px;
+    color: var(--info-text);
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .suggest-btn:hover { text-decoration: underline; }
+  .suggest-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Chunk cards ── */
+  .chunk-card {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .chunk-header {
+    padding: 10px 14px;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .chunk-title { font-size: 12px; font-weight: 500; }
+  .chunk-meta { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+  .chunk-body { padding: 12px 14px; font-size: 13px; line-height: 1.7; color: var(--text-secondary); white-space: pre-wrap; }
+
+  .keyword-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    background: var(--info-bg);
+    color: var(--info-text);
+    margin: 2px;
+  }
+
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .score-good { background: var(--success-bg); color: var(--success-text); }
+  .score-ok   { background: var(--warning-bg); color: var(--warning-text); }
+  .score-bad  { background: var(--danger-bg);  color: var(--danger-text); }
+
+  /* ── Metric grid ── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .metric-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    text-align: center;
+  }
+
+  .metric-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+  .metric-value { font-size: 20px; font-weight: 500; }
+
+  .summary-box {
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  /* ── Feedback / issue boxes ── */
+  .feedback-box {
+    border: 0.5px solid var(--warning-text);
+    background: var(--warning-bg);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--warning-text);
+    margin-top: 16px;
+    white-space: pre-wrap;
+  }
+
+  /* ── SEO audit specific ── */
+  .url-input-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .url-input-wrap input { flex: 1; }
+
+  .audit-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .issue-block {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+
+  .issue-header {
+    padding: 9px 14px;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .issue-title { font-size: 12px; font-weight: 500; }
+
+  .issue-body {
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .issue-body strong { color: var(--text-primary); font-weight: 500; }
+
+  .severity-critical { background: var(--danger-bg);  color: var(--danger-text); }
+  .severity-high     { background: var(--warning-bg); color: var(--warning-text); }
+  .severity-medium   { background: var(--info-bg);    color: var(--info-text); }
+  .severity-low      { background: var(--success-bg); color: var(--success-text); }
+
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-bottom: 0.5px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .checklist-item:last-child { border-bottom: none; }
+
+  .checklist-item i { color: var(--text-tertiary); margin-top: 2px; flex-shrink: 0; }
+
+  .section-heading {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 16px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .priorities-list { list-style: none; }
+
+  .priority-item {
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    margin-bottom: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .priority-item .sev-tag {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── Misc ── */
+  .empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .strategy-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+  .download-btn {
+    padding: 7px 14px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s;
+  }
+  .download-btn:hover { background: var(--bg-secondary); }
+</style>
+</head>
+<body>
+
+<!-- ── Topbar ── -->
+<div class="topbar">
+  <span class="topbar-logo" style="background:transparent;" title="Jeremy Starke">
+    <svg width="26" height="26" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="[js]">
+      <rect width="64" height="64" rx="14" fill="#0E1A2B"/>
+      <rect x="3.5" y="3.5" width="57" height="57" rx="11.5" fill="none" stroke="#0A66C2" stroke-opacity="0.3" stroke-width="2"/>
+      <text x="32" y="41" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace" font-size="23" font-weight="700" letter-spacing="-0.5" text-anchor="middle"><tspan fill="#0A66C2">[</tspan><tspan fill="#E9A23B">js</tspan><tspan fill="#0A66C2">]</tspan></text>
+    </svg>
+  </span>
+  <span class="topbar-title">Toolbox</span>
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('analyzer')" id="tab-analyzer">
+      <i class="ti ti-file-text" style="font-size:14px;"></i> Content Analyzer
+    </div>
+    <div class="tab" onclick="switchTab('seo')" id="tab-seo">
+      <i class="ti ti-chart-bar" style="font-size:14px;"></i> SEO Audit
+    </div>
+    <div class="tab" onclick="switchTab('cluster')" id="tab-cluster">
+      <i class="ti ti-binary-tree" style="font-size:14px;"></i> Keyword Clustering
+    </div>
+  </div>
+  <button id="themeToggle" onclick="toggleTheme()" title="Toggle light / dark"
+    style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--text-secondary);border-radius:8px;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;">
+    <i class="ti ti-moon"></i>
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE 1 — CONTENT ANALYZER                 -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page active" id="page-analyzer">
+  <div class="app">
+    <div>
+      <details class="howto">
+        <summary>How the Content Analyzer works</summary>
+        <div class="howto-body">
+          <p>Paste a draft and it scores how well the writing is built for search engines <em>and</em> for AI/RAG pipelines. It has <strong>two separate actions</strong>:</p>
+          <p><strong>Analyze</strong> — the structured pass. Rates keyword coverage against your primary/related keywords, checks readability, and breaks the text into <strong>chunks</strong> the way an embedding/RAG system would ingest it, so you can spot thin or off-topic sections. This is the objective, metric-driven report.</p>
+          <p><strong>🔥 Savage feedback</strong> — a different beast. Claude plays a harsh-but-brilliant editor and gives blunt, spicy, no-softening critique (under 200 words) on whether the writing actually lands. Use it for a gut-check on quality and voice, <em>not</em> for scores. Think tough editor, not spreadsheet.</p>
+          <p><strong>Options:</strong> <span class="k">Target audience</span> tunes both passes to who you're writing for. <span class="k">Chunking strategy</span> controls how the text is split — <strong>Document</strong> (by headings), <strong>Fixed size</strong> (uniform word counts, best for embeddings), <strong>Semantic</strong> (by topic shift), or <strong>Paragraph</strong> — mirroring real RAG ingestion strategies.</p>
+          <p style="color:var(--text-tertiary);">Uses your own Anthropic API key (entered once, stored only in this browser).</p>
+        </div>
+      </details>
+      <div class="card">
+        <div class="card-title">
+          Content input
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="word-count" id="wc">0 words</span>
+            <button class="btn-secondary" onclick="clearAll()">Clear</button>
+          </div>
+        </div>
+
+        <textarea id="content"
+          placeholder="Paste your content here with formatting!&#10;&#10;Supported formats:&#10;• Markdown headings: # H1, ## H2, ### H3&#10;• HTML headings: <h1>Title</h1>, <h2>Section</h2>&#10;• Bold text: **Important Section**&#10;• ALL CAPS HEADINGS&#10;• Numbered sections: 1. Introduction&#10;&#10;The tool will intelligently detect these and create smart chunks of 100–200 words."
+          oninput="updateWC()"
+        ></textarea>
+
+        <div class="icon-row">
+          <button class="icon-btn" title="Clear" onclick="clearAll()"><i class="ti ti-refresh"></i></button>
+          <button class="icon-btn" title="Copy" onclick="copyContent()"><i class="ti ti-copy"></i></button>
+          <button class="icon-btn" title="Download" onclick="downloadContent()"><i class="ti ti-download"></i></button>
+        </div>
+
+        <div class="bottom-bar">
+          <i class="ti ti-settings" style="color:var(--text-tertiary);font-size:15px;"></i>
+          <span style="font-size:12px;color:var(--text-secondary);">Target audience:</span>
+          <select id="audience" style="max-width:175px;">
+            <option>General readers</option>
+            <option>Technical experts</option>
+            <option>Marketing teams</option>
+            <option>Students</option>
+            <option>Executives</option>
+            <option>Developers</option>
+          </select>
+          <button class="savage-btn" onclick="getSavageFeedback()">🔥 Get savage feedback</button>
+        </div>
+      </div>
+
+      <div id="results-area" style="margin-top:16px;"></div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-title">
+          Target keywords
+          <button class="suggest-btn" id="suggestBtn" onclick="suggestKeywords()">
+            <i class="ti ti-sparkles"></i> Suggest
+          </button>
+        </div>
+
+        <div class="section">
+          <label class="label">Primary keyword</label>
+          <input type="text" id="primaryKw" placeholder="e.g., digital marketing strategy" oninput="renderAnalyzeBtn()" />
+        </div>
+
+        <div class="section">
+          <label class="label">Related keywords</label>
+          <textarea id="relatedKw" style="min-height:80px;resize:none;" placeholder="Enter related keywords, one per line"></textarea>
+        </div>
+
+        <div class="section">
+          <label class="label">People also ask questions</label>
+          <textarea id="paaKw" style="min-height:80px;resize:none;" placeholder="People also ask questions"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Chunk settings</div>
+
+        <div class="section">
+          <label class="label">Chunking strategy</label>
+          <select id="chunkStrategy" onchange="updateStrategyHint()">
+            <option value="document">Document-based (smart headings &amp; structure)</option>
+            <option value="fixed">Fixed size (equal word count)</option>
+            <option value="semantic">Semantic (topic-based)</option>
+            <option value="paragraph">Paragraph-based</option>
+          </select>
+          <div class="strategy-hint" id="strategyHint">Best for: structured documents, manuals, articles</div>
+        </div>
+
+        <div class="section">
+          <label class="label">Target words per chunk</label>
+          <div class="range-row">
+            <span>50</span>
+            <input type="range" min="50" max="300" value="150" step="10" id="chunkSize"
+              oninput="document.getElementById('csVal').textContent=this.value" />
+            <span>300</span>
+            <span class="range-val" id="csVal">150</span>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <span style="font-size:13px;">Smart heading detection</span>
+          <div class="toggle" id="t1" onclick="toggleSwitch('t1')" role="switch" aria-checked="true" tabindex="0">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <span style="font-size:13px;">Auto-merge short chunks</span>
+          <div class="toggle" id="t2" onclick="toggleSwitch('t2')" role="switch" aria-checked="true" tabindex="0">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="analyzeBtn" onclick="analyze()">
+        <i class="ti ti-info-circle"></i>
+        Enter content &amp; keyword to analyze
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE 2 — SEO AUDIT                        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page" id="page-seo">
+  <div class="app">
+    <div>
+      <details class="howto">
+        <summary>How the SEO Audit works</summary>
+        <div class="howto-body">
+          <p>Give it a URL and it runs a <strong>heuristic technical-SEO audit</strong> — indexability, metadata &amp; head tags, content &amp; headings, structured data, performance signals, mobile/UX, and internationalization — returning findings ranked by severity, each with a "why it matters" and a concrete fix.</p>
+          <p><strong>Heuristic, not a crawler:</strong> it reasons about the page against known best practices rather than running a live Lighthouse crawl. That makes it fast and explanatory — great for triage and for teaching a client what's wrong — but pair it with a real crawl for exhaustive coverage.</p>
+          <p><strong>Options:</strong> <span class="k">Audit scope</span> toggles which areas to check. <span class="k">Output depth</span> (full / priorities / executive) and <span class="k">Audience</span> (SEO / developer / client) reframe the <em>same</em> findings — e.g. a developer gets the exact tag to add; a client gets the plain-English ranking impact.</p>
+        </div>
+      </details>
+      <div class="card">
+        <div class="card-title">
+          URL to audit
+          <button class="btn-secondary" onclick="clearAudit()">Clear</button>
+        </div>
+
+        <div class="url-input-wrap" style="margin-bottom:14px;">
+          <input type="url" id="auditUrl" placeholder="https://example.com/page-to-audit"
+            oninput="renderAuditBtn()" onkeydown="if(event.key==='Enter')runAudit()" />
+        </div>
+
+        <div class="audit-options">
+          <div>
+            <label class="label">Target keyword <span style="color:var(--text-tertiary)">(optional)</span></label>
+            <input type="text" id="auditKw" placeholder="e.g., running shoes women" />
+          </div>
+          <div>
+            <label class="label">Target country / language <span style="color:var(--text-tertiary)">(optional)</span></label>
+            <input type="text" id="auditCountry" placeholder="e.g., US / English" />
+          </div>
+        </div>
+
+        <div class="section">
+          <label class="label">Additional context <span style="color:var(--text-tertiary)">(optional — CMS, known issues, etc.)</span></label>
+          <textarea id="auditContext" style="min-height:70px;resize:none;"
+            placeholder="e.g., WordPress site using Yoast SEO. Known issue: slow GTM loading."></textarea>
+        </div>
+      </div>
+
+      <div id="audit-results" style="margin-top:16px;"></div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-title">Audit scope</div>
+
+        <div class="toggle-row">
+          <span style="font-size:13px;">HTTP &amp; indexability</span>
+          <div class="toggle" id="s1" onclick="toggleSwitch('s1')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;">Metadata &amp; head tags</span>
+          <div class="toggle" id="s2" onclick="toggleSwitch('s2')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;">Content &amp; headings</span>
+          <div class="toggle" id="s3" onclick="toggleSwitch('s3')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;">Structured data</span>
+          <div class="toggle" id="s4" onclick="toggleSwitch('s4')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;">Performance (heuristic)</span>
+          <div class="toggle" id="s5" onclick="toggleSwitch('s5')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;">Mobile &amp; UX</span>
+          <div class="toggle" id="s6" onclick="toggleSwitch('s6')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;">Internationalisation</span>
+          <div class="toggle" id="s7" onclick="toggleSwitch('s7')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Report format</div>
+        <div class="section">
+          <label class="label">Output depth</label>
+          <select id="auditDepth">
+            <option value="full">Full report (all sections)</option>
+            <option value="priorities">Priorities + checklist only</option>
+            <option value="executive">Executive summary only</option>
+          </select>
+        </div>
+        <div class="section">
+          <label class="label">Audience</label>
+          <select id="auditAudience">
+            <option value="seo">SEO specialist</option>
+            <option value="dev">Developer</option>
+            <option value="client">Client / non-technical</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="auditBtn" onclick="runAudit()" disabled>
+        <i class="ti ti-info-circle"></i>
+        Enter a URL to audit
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE 3 — KEYWORD CLUSTERING               -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page" id="page-cluster">
+  <div class="app">
+    <div>
+      <details class="howto">
+        <summary>How Keyword Clustering works</summary>
+        <div class="howto-body">
+          <p>Paste a keyword list and it groups them by <strong>real Google ranking overlap</strong>: for each keyword it pulls the top ~10 results, then merges keywords whose SERPs share enough of the same URLs — because that means <strong>one page can rank for all of them</strong>. It answers "how many pages do I actually write, and what does each target," with evidence instead of guesswork.</p>
+          <p>Why this beats grouping by words: "how to grow tomatoes" and "growing tomatoes in containers" sound identical but rank different pages (two pages); keywords with totally different wording can share 7/10 URLs (one page). Only the live SERP reveals this.</p>
+          <p><strong>Options:</strong> <span class="k">Merge threshold</span> = how many shared URLs to cluster on — <strong>2</strong> = broad groups, <strong>3</strong> = Ahrefs-standard, <strong>5+</strong> = tight. <span class="k">Enrich</span> adds search volume, difficulty, and intent per keyword. Each cluster gets a primary keyword, the shared "pages to beat," and a one-click SEO brief.</p>
+          <p><strong>Live data via DataForSEO</strong> (~$0.002/keyword). Not sure? Hit <strong>View demo</strong> — it renders real output from a saved run with zero API cost.</p>
+        </div>
+      </details>
+      <div class="card">
+        <div class="card-title">
+          Keyword list
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="word-count" id="kwCount">0 keywords</span>
+            <button class="btn-secondary" onclick="clearCluster()">Clear</button>
+          </div>
+        </div>
+        <textarea id="clusterKws" style="min-height:220px;"
+          placeholder="One keyword per line, e.g.&#10;how to grow tomatoes&#10;growing tomatoes in containers&#10;best fertilizer for tomatoes&#10;when to plant tomatoes&#10;tomato companion plants"
+          oninput="updateKwCount()"></textarea>
+        <p style="font-size:12px;color:var(--text-tertiary);margin-top:8px;">
+          Groups keywords by <strong>real SERP overlap</strong> — two keywords cluster when Google
+          ranks the same pages for both, so one page can target the whole group. Live data from DataForSEO.
+        </p>
+      </div>
+
+      <div id="cluster-results" style="margin-top:16px;"></div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-title">Settings</div>
+        <div class="audit-options">
+          <div>
+            <label class="label">Location</label>
+            <input type="text" id="clusterLoc" value="United States" />
+          </div>
+          <div>
+            <label class="label">Language</label>
+            <input type="text" id="clusterLang" value="en" />
+          </div>
+        </div>
+        <div class="section">
+          <label class="label">Merge threshold — <span id="threshVal">3</span> shared URLs</label>
+          <input type="range" id="clusterThresh" min="2" max="6" value="3" style="width:100%;"
+            oninput="document.getElementById('threshVal').textContent=this.value" />
+          <p style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">
+            2 = broad groups · 3 = Ahrefs-standard · 5+ = tight
+          </p>
+        </div>
+        <div class="toggle-row">
+          <span style="font-size:13px;">Enrich (volume · difficulty · intent)</span>
+          <div class="toggle" id="clusterEnrich" onclick="toggleSwitch('clusterEnrich')" role="switch" aria-checked="true" tabindex="0"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="clusterBtn" onclick="runCluster()" disabled>
+        <i class="ti ti-binary-tree"></i>
+        Enter keywords to cluster
+      </button>
+      <button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="loadClusterDemo()">
+        <i class="ti ti-player-play"></i> View demo (no API call)
+      </button>
+      <p style="font-size:11px;color:var(--text-tertiary);text-align:center;margin-top:8px;">
+        ~$0.002 per keyword (DataForSEO) · max 50 per run
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── API KEY ──
+     Stored in your browser (localStorage), never in this file. You're prompted
+     once and it's remembered on this device. Clear it from the console: clearApiKey() */
+  function getApiKey() {
+    let k = localStorage.getItem('anthropic_api_key');
+    if (!k) {
+      k = prompt('Enter your Anthropic API key (stored locally in your browser only):');
+      if (k) { k = k.trim(); localStorage.setItem('anthropic_api_key', k); }
+    }
+    return k;
+  }
+  function clearApiKey() { localStorage.removeItem('anthropic_api_key'); showToast('API key cleared'); }
+
+  /* ════════════════════════════════
+     THEME (light / dark)
+     Stored choice wins; falls back to the OS setting when unset.
+  ════════════════════════════════ */
+  function currentTheme() {
+    const stored = localStorage.getItem('ct_theme');
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function applyStoredTheme() {
+    const stored = localStorage.getItem('ct_theme');
+    if (stored) document.documentElement.setAttribute('data-theme', stored);
+    else document.documentElement.removeAttribute('data-theme'); // follow OS
+    const icon = document.querySelector('#themeToggle i');
+    if (icon) icon.className = currentTheme() === 'dark' ? 'ti ti-sun' : 'ti ti-moon';
+  }
+  function toggleTheme() {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('ct_theme', next);
+    applyStoredTheme();
+  }
+
+  /* ════════════════════════════════
+     TAB SWITCHING
+  ════════════════════════════════ */
+  function switchTab(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('page-' + tab).classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+  }
+
+  /* ════════════════════════════════
+     SHARED UTILS
+  ════════════════════════════════ */
+  const strategyHints = {
+    document: 'Best for: structured documents, manuals, articles',
+    fixed:    'Best for: uniform datasets, RAG pipelines, embeddings',
+    semantic: 'Best for: conversational content, FAQs, blogs',
+    paragraph:'Best for: news articles, essays, short-form content'
+  };
+
+  function updateStrategyHint() {
+    document.getElementById('strategyHint').textContent =
+      strategyHints[document.getElementById('chunkStrategy').value];
+  }
+
+  function toggleSwitch(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('off');
+    el.setAttribute('aria-checked', String(!el.classList.contains('off')));
+  }
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function showToast(msg) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    Object.assign(t.style, {
+      position:'fixed', bottom:'20px', right:'20px',
+      background:'#1a1a1a', color:'white', padding:'8px 14px',
+      borderRadius:'8px', fontSize:'13px', zIndex:'9999',
+      opacity:'1', transition:'opacity 0.3s'
+    });
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 2000);
+  }
+
+  async function callClaude(messages, systemPrompt, maxTokens) {
+    const apiKey = getApiKey();
+    if (!apiKey) throw new Error('No API key set. Reload and enter your Anthropic key.');
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: maxTokens || 4000,
+        system: systemPrompt,
+        messages
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'API error');
+    }
+    const data = await res.json();
+    return data.content.map(b => b.text || '').join('');
+  }
+
+  /* ════════════════════════════════
+     CONTENT ANALYZER
+  ════════════════════════════════ */
+  function updateWC() {
+    const text = document.getElementById('content').value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    document.getElementById('wc').textContent = words + ' words';
+    renderAnalyzeBtn();
+  }
+
+  function renderAnalyzeBtn() {
+    const btn = document.getElementById('analyzeBtn');
+    const ok = document.getElementById('content').value.trim() &&
+                document.getElementById('primaryKw').value.trim();
+    btn.innerHTML = ok
+      ? '<i class="ti ti-brand-claude"></i> Analyze content'
+      : '<i class="ti ti-info-circle"></i> Enter content &amp; keyword to analyze';
+  }
+
+  function clearAll() {
+    document.getElementById('content').value = '';
+    document.getElementById('wc').textContent = '0 words';
+    document.getElementById('results-area').innerHTML = '';
+    renderAnalyzeBtn();
+  }
+
+  function copyContent() {
+    navigator.clipboard.writeText(document.getElementById('content').value)
+      .then(() => showToast('Copied to clipboard'));
+  }
+
+  function downloadContent() {
+    const text = document.getElementById('content').value;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], {type:'text/plain'}));
+    a.download = 'content.txt';
+    a.click();
+  }
+
+  async function suggestKeywords() {
+    const content = document.getElementById('content').value.trim();
+    if (!content) { alert('Paste some content first.'); return; }
+    const btn = document.getElementById('suggestBtn');
+    btn.textContent = 'Thinking...';
+    btn.disabled = true;
+    try {
+      const result = await callClaude(
+        [{ role:'user', content:
+          'Analyze this content and suggest: 1 primary keyword, 3-5 related keywords, and 2-3 "People Also Ask" questions.\n' +
+          'Return ONLY valid JSON (no markdown):\n{"primary":"...","related":["..."],"paa":["..."]}\n\nContent:\n' + content.slice(0,2000)
+        }],
+        'You are an SEO keyword research expert. Return only valid JSON, nothing else.'
+      );
+      const kw = JSON.parse(result.replace(/```json|```/g,'').trim());
+      document.getElementById('primaryKw').value = kw.primary || '';
+      document.getElementById('relatedKw').value = (kw.related||[]).join('\n');
+      document.getElementById('paaKw').value = (kw.paa||[]).join('\n');
+      renderAnalyzeBtn();
+    } catch(e) { alert('Could not suggest keywords: ' + e.message); }
+    btn.innerHTML = '<i class="ti ti-sparkles"></i> Suggest';
+    btn.disabled = false;
+  }
+
+  async function analyze() {
+    const content   = document.getElementById('content').value.trim();
+    const primaryKw = document.getElementById('primaryKw').value.trim();
+    if (!content)   { alert('Please paste some content first.'); return; }
+    if (!primaryKw) { alert('Please enter a primary keyword.'); return; }
+
+    const relatedKw     = document.getElementById('relatedKw').value.trim();
+    const paaKw         = document.getElementById('paaKw').value.trim();
+    const targetWords   = document.getElementById('chunkSize').value;
+    const strategy      = document.getElementById('chunkStrategy').value;
+    const audience      = document.getElementById('audience').value;
+    const smartHeadings = !document.getElementById('t1').classList.contains('off');
+    const autoMerge     = !document.getElementById('t2').classList.contains('off');
+
+    const btn = document.getElementById('analyzeBtn');
+    btn.innerHTML = '<div class="loading-spinner"></div> Analyzing...';
+    btn.disabled = true;
+
+    const area = document.getElementById('results-area');
+    area.innerHTML = '<div class="empty-state"><i class="ti ti-loader" style="font-size:28px;display:block;margin-bottom:8px;"></i>Splitting and analyzing your content...</div>';
+
+    try {
+      const result = await callClaude(
+        [{ role:'user', content:
+          `Analyze this content and split into smart chunks.\n\nContent:\n${content.slice(0,4000)}\n\nSettings:\n- Primary keyword: ${primaryKw}\n- Related keywords: ${relatedKw||'none'}\n- People also ask: ${paaKw||'none'}\n- Strategy: ${strategy}\n- Target words per chunk: ${targetWords}\n- Smart heading detection: ${smartHeadings}\n- Auto-merge short chunks: ${autoMerge}\n- Target audience: ${audience}\n\nReturn ONLY this JSON:\n{"summary":"...","totalChunks":number,"keywordCoverage":number,"readabilityScore":"Good|Fair|Poor","chunks":[{"title":"...","wordCount":number,"text":"...","keywords":["..."],"relevanceScore":number,"notes":"..."}]}`
+        }],
+        'You are an expert content strategist and SEO specialist. Always respond with valid JSON only, no markdown or preamble.'
+      );
+      renderResults(JSON.parse(result.replace(/```json|```/g,'').trim()));
+    } catch(e) {
+      area.innerHTML = `<div class="feedback-box" style="border-color:#A32D2D;background:var(--danger-bg);color:var(--danger-text);">Analysis failed.\n\n${e.message}</div>`;
+    }
+
+    btn.innerHTML = '<i class="ti ti-refresh"></i> Re-analyze';
+    btn.disabled = false;
+  }
+
+  function renderResults(data) {
+    const area = document.getElementById('results-area');
+    let html = `<div class="card">
+      <div class="card-title">Analysis results</div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">Chunks created</div><div class="metric-value">${data.totalChunks||(data.chunks||[]).length}</div></div>
+        <div class="metric-card"><div class="metric-label">Keyword coverage</div><div class="metric-value">${data.keywordCoverage}%</div></div>
+        <div class="metric-card"><div class="metric-label">Readability</div><div class="metric-value" style="font-size:15px;padding-top:4px;">${data.readabilityScore}</div></div>
+      </div>
+      <div class="summary-box">${escHtml(data.summary)}</div><div>`;
+
+    (data.chunks||[]).forEach((chunk,i) => {
+      const score = chunk.relevanceScore||70;
+      const cls   = score>=75?'score-good':'score-ok';
+      const lbl   = score>=75?'✓ Relevant':'~ Moderate';
+      html += `<div class="chunk-card">
+        <div class="chunk-header">
+          <div>
+            <div class="chunk-title">Chunk ${i+1}: ${escHtml(chunk.title)}</div>
+            <div class="chunk-meta">${chunk.wordCount} words${chunk.notes?' · '+escHtml(chunk.notes):''}</div>
+          </div>
+          <span class="score-badge ${cls}">${lbl} ${score}%</span>
+        </div>
+        <div class="chunk-body">${escHtml(chunk.text)}`;
+      if (chunk.keywords?.length) {
+        html += `<div style="margin-top:10px;">${chunk.keywords.map(k=>`<span class="keyword-pill">${escHtml(k)}</span>`).join('')}</div>`;
+      }
+      html += `</div></div>`;
+    });
+
+    html += `</div></div>`;
+    area.innerHTML = html;
+  }
+
+  async function getSavageFeedback() {
+    const content = document.getElementById('content').value.trim();
+    if (!content) { alert('Paste some content first.'); return; }
+    const audience = document.getElementById('audience').value;
+    const btn = document.querySelector('.savage-btn');
+    btn.textContent = '🔥 Analyzing...';
+    btn.disabled = true;
+    try {
+      const result = await callClaude(
+        [{ role:'user', content:
+          `Give brutally honest, savage but constructive feedback on this content for "${audience}". Be direct, a little spicy, but genuinely useful. Under 200 words. No softening.\n\nContent:\n${content.slice(0,3000)}`
+        }],
+        'You are a harsh but brilliant editor. Be direct and a bit savage, but always constructive and specific.'
+      );
+      const area = document.getElementById('results-area');
+      const existing = area.querySelector('.feedback-box');
+      if (existing) existing.remove();
+      const fb = document.createElement('div');
+      fb.className = 'feedback-box';
+      fb.innerHTML = '<strong style="display:block;margin-bottom:8px;">🔥 Savage feedback</strong>' + escHtml(result);
+      area.prepend(fb);
+    } catch(e) { alert('Could not get feedback: ' + e.message); }
+    btn.textContent = '🔥 Get savage feedback';
+    btn.disabled = false;
+  }
+
+  /* ════════════════════════════════
+     SEO AUDIT
+  ════════════════════════════════ */
+  function renderAuditBtn() {
+    const btn = document.getElementById('auditBtn');
+    const url = document.getElementById('auditUrl').value.trim();
+    if (url) {
+      btn.innerHTML = '<i class="ti ti-chart-bar"></i> Run SEO audit';
+      btn.disabled = false;
+    } else {
+      btn.innerHTML = '<i class="ti ti-info-circle"></i> Enter a URL to audit';
+      btn.disabled = true;
+    }
+  }
+
+  function clearAudit() {
+    document.getElementById('auditUrl').value = '';
+    document.getElementById('auditKw').value = '';
+    document.getElementById('auditCountry').value = '';
+    document.getElementById('auditContext').value = '';
+    document.getElementById('audit-results').innerHTML = '';
+    renderAuditBtn();
+  }
+
+  function getActiveScopes() {
+    const scopes = [
+      {id:'s1', label:'HTTP & indexability'},
+      {id:'s2', label:'Metadata & head tags'},
+      {id:'s3', label:'Content & headings'},
+      {id:'s4', label:'Structured data'},
+      {id:'s5', label:'Performance (heuristic)'},
+      {id:'s6', label:'Mobile & UX'},
+      {id:'s7', label:'Internationalisation'},
+    ];
+    return scopes.filter(s => !document.getElementById(s.id).classList.contains('off')).map(s=>s.label);
+  }
+
+  async function runAudit() {
+    const url = document.getElementById('auditUrl').value.trim();
+    if (!url) { alert('Please enter a URL to audit.'); return; }
+
+    const kw        = document.getElementById('auditKw').value.trim();
+    const country   = document.getElementById('auditCountry').value.trim();
+    const context   = document.getElementById('auditContext').value.trim();
+    const depth     = document.getElementById('auditDepth').value;
+    const audience  = document.getElementById('auditAudience').value;
+    const scopes    = getActiveScopes();
+
+    const btn = document.getElementById('auditBtn');
+    btn.innerHTML = '<div class="loading-spinner"></div> Auditing...';
+    btn.disabled = true;
+
+    const results = document.getElementById('audit-results');
+    results.innerHTML = '<div class="empty-state"><i class="ti ti-loader" style="font-size:28px;display:block;margin-bottom:8px;"></i>Running technical SEO audit...</div>';
+
+    const depthInstructions = {
+      full: 'Produce the full report including all sections: executive summary, top priorities, detailed findings for every scope, actionable checklist, and assumptions.',
+      priorities: 'Produce only the executive summary table, top priorities list, and actionable checklist. Skip detailed findings.',
+      executive: 'Produce only the executive summary paragraph and metrics table. No other sections.'
+    };
+
+    const audienceInstructions = {
+      seo: 'Write for an experienced SEO specialist. Skip basic theory. Use technical terminology.',
+      dev: 'Write for a developer. Focus on implementation details, code changes, and specific tags. Assume SEO knowledge is limited.',
+      client: 'Write for a non-technical client. Avoid jargon. Explain why each issue matters in business terms.'
+    };
+
+    const systemPrompt = `You are an expert Technical SEO auditor. You do NOT have live browser access — you will audit based on the URL pattern, domain signals, common CMS patterns, and expert SEO knowledge. Always be explicit when making an inference vs. stating a verified fact. Never invent specific metrics. Respond with valid JSON only — no markdown fences, no preamble.`;
+
+    const userPrompt = `Perform a technical SEO audit for this URL:
+${url}
+
+${kw ? `Target keyword: ${kw}` : ''}
+${country ? `Target country/language: ${country}` : ''}
+${context ? `Additional context: ${context}` : ''}
+
+Active audit scopes: ${scopes.join(', ')}
+Report depth: ${depthInstructions[depth]}
+Write for: ${audienceInstructions[audience]}
+
+Return ONLY this JSON structure (adapt sections to depth requested):
+{
+  "url": "${url}",
+  "summary": "1-2 paragraph executive summary",
+  "score": number (0-100, overall technical SEO estimate),
+  "indexability": "Indexable" | "Not indexable" | "Unclear",
+  "counts": { "critical": number, "high": number, "medium": number, "low": number },
+  "priorities": [
+    { "severity": "Critical|High|Medium|Low", "area": "area name", "description": "short description", "impact": "expected impact" }
+  ],
+  "sections": [
+    {
+      "title": "section name",
+      "issues": [
+        {
+          "severity": "Critical|High|Medium|Low",
+          "found": "what was found",
+          "why": "why it matters for SEO",
+          "fix": "specific recommended fix"
+        }
+      ]
+    }
+  ],
+  "checklist": ["Fix X by doing Y", "Add Z to location", "Refactor A to achieve B"],
+  "limitations": ["limitation 1", "limitation 2"]
+}`;
+
+    try {
+      const result = await callClaude([{role:'user',content:userPrompt}], systemPrompt, 4000);
+      const data = JSON.parse(result.replace(/```json|```/g,'').trim());
+      renderAuditResults(data);
+    } catch(e) {
+      results.innerHTML = `<div class="feedback-box" style="border-color:#A32D2D;background:var(--danger-bg);color:var(--danger-text);">Audit failed. Check your API key and try again.\n\n${e.message}</div>`;
+    }
+
+    btn.innerHTML = '<i class="ti ti-refresh"></i> Re-run audit';
+    btn.disabled = false;
+  }
+
+  function renderAuditResults(data) {
+    const area = document.getElementById('audit-results');
+
+    const scoreColor = data.score >= 70 ? 'var(--success-text)' :
+                       data.score >= 45 ? 'var(--warning-text)' : 'var(--danger-text)';
+
+    const sevClass = sev => {
+      const m = {Critical:'severity-critical',High:'severity-high',Medium:'severity-medium',Low:'severity-low'};
+      return m[sev] || 'severity-low';
+    };
+
+    const badgeClass = sev => {
+      const m = {Critical:'score-bad',High:'score-ok',Medium:'score-badge',Low:'score-good'};
+      return m[sev] || '';
+    };
+
+    let html = `<div class="card">
+      <div class="card-title" style="flex-wrap:wrap;gap:8px;">
+        Audit results
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="download-btn" onclick="downloadAuditReport()">
+            <i class="ti ti-download"></i> Download report
+          </button>
+        </div>
+      </div>
+
+      <div class="metric-grid" style="grid-template-columns:repeat(auto-fit,minmax(90px,1fr));">
+        <div class="metric-card">
+          <div class="metric-label">SEO score</div>
+          <div class="metric-value" style="color:${scoreColor}">${data.score}/100</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Indexability</div>
+          <div class="metric-value" style="font-size:12px;padding-top:6px;">${escHtml(data.indexability)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Critical</div>
+          <div class="metric-value" style="color:var(--danger-text)">${data.counts?.critical||0}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">High</div>
+          <div class="metric-value" style="color:var(--warning-text)">${data.counts?.high||0}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Medium</div>
+          <div class="metric-value" style="color:var(--info-text)">${data.counts?.medium||0}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Low</div>
+          <div class="metric-value" style="color:var(--success-text)">${data.counts?.low||0}</div>
+        </div>
+      </div>
+
+      <div class="summary-box">${escHtml(data.summary)}</div>`;
+
+    /* Priorities */
+    if (data.priorities?.length) {
+      html += `<div class="section-heading">Top priorities</div><ul class="priorities-list">`;
+      data.priorities.forEach(p => {
+        html += `<div class="priority-item ${sevClass(p.severity)}" style="background:transparent;border:0.5px solid var(--border);margin-bottom:6px;">
+          <span class="sev-tag score-badge ${badgeClass(p.severity)}">${escHtml(p.severity)}</span>
+          <div style="flex:1;">
+            <strong style="font-size:12px;">${escHtml(p.area)}</strong>
+            <span style="font-size:12px;color:var(--text-secondary);"> — ${escHtml(p.description)}</span>
+            ${p.impact ? `<div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">Impact: ${escHtml(p.impact)}</div>` : ''}
+          </div>
+        </div>`;
+      });
+      html += `</ul>`;
+    }
+
+    /* Detailed sections */
+    if (data.sections?.length) {
+      html += `<div class="section-heading">Detailed findings</div>`;
+      data.sections.forEach(section => {
+        if (!section.issues?.length) return;
+        html += `<div style="font-size:12px;font-weight:500;color:var(--text-secondary);margin:12px 0 6px;">${escHtml(section.title)}</div>`;
+        section.issues.forEach(issue => {
+          html += `<div class="issue-block">
+            <div class="issue-header">
+              <span class="issue-title">${escHtml(issue.found?.slice(0,80)||'Issue')}</span>
+              <span class="score-badge ${badgeClass(issue.severity)}">${escHtml(issue.severity)}</span>
+            </div>
+            <div class="issue-body">
+              ${issue.why ? `<div style="margin-bottom:6px;"><strong>Why it matters:</strong> ${escHtml(issue.why)}</div>` : ''}
+              ${issue.fix ? `<div><strong>Fix:</strong> ${escHtml(issue.fix)}</div>` : ''}
+            </div>
+          </div>`;
+        });
+      });
+    }
+
+    /* Checklist */
+    if (data.checklist?.length) {
+      html += `<div class="section-heading">Actionable checklist</div><div>`;
+      data.checklist.forEach(item => {
+        html += `<div class="checklist-item">
+          <i class="ti ti-square" style="font-size:14px;"></i>
+          <span>${escHtml(item)}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    /* Limitations */
+    if (data.limitations?.length) {
+      html += `<div class="section-heading" style="margin-top:20px;">Assumptions &amp; limitations</div>
+        <div style="font-size:12px;color:var(--text-tertiary);line-height:1.8;">`;
+      data.limitations.forEach(l => {
+        html += `<div>• ${escHtml(l)}</div>`;
+      });
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+    area.innerHTML = html;
+
+    /* Store for download */
+    window._lastAuditData = data;
+  }
+
+  function downloadAuditReport() {
+    const d = window._lastAuditData;
+    if (!d) return;
+    let md = `# Technical SEO Audit Report\n\n**URL:** ${d.url}\n**SEO Score:** ${d.score}/100\n**Indexability:** ${d.indexability}\n\n## Executive Summary\n\n${d.summary}\n\n`;
+    md += `| Severity | Count |\n|----------|-------|\n| Critical | ${d.counts?.critical||0} |\n| High | ${d.counts?.high||0} |\n| Medium | ${d.counts?.medium||0} |\n| Low | ${d.counts?.low||0} |\n\n`;
+    if (d.priorities?.length) {
+      md += `## Top Priorities\n\n`;
+      d.priorities.forEach(p => { md += `- **${p.severity} – ${p.area}** – ${p.description}. Impact: ${p.impact||'—'}\n`; });
+      md += '\n';
+    }
+    if (d.sections?.length) {
+      md += `## Detailed Findings\n\n`;
+      d.sections.forEach(s => {
+        md += `### ${s.title}\n\n`;
+        (s.issues||[]).forEach(i => {
+          md += `**[${i.severity}]** ${i.found}\n- Why it matters: ${i.why||'—'}\n- Fix: ${i.fix||'—'}\n\n`;
+        });
+      });
+    }
+    if (d.checklist?.length) {
+      md += `## Actionable Checklist\n\n`;
+      d.checklist.forEach(c => { md += `- [ ] ${c}\n`; });
+      md += '\n';
+    }
+    if (d.limitations?.length) {
+      md += `## Assumptions & Limitations\n\n`;
+      d.limitations.forEach(l => { md += `- ${l}\n`; });
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([md], {type:'text/markdown'}));
+    a.download = 'seo-audit-report.md';
+    a.click();
+    showToast('Report downloaded');
+  }
+
+  /* ════════════════════════════════
+     KEYWORD CLUSTERING
+  ════════════════════════════════ */
+  function getKeywordList() {
+    return document.getElementById('clusterKws').value
+      .split('\n').map(k => k.trim()).filter(Boolean);
+  }
+
+  function updateKwCount() {
+    const n = getKeywordList().length;
+    document.getElementById('kwCount').textContent = n + (n === 1 ? ' keyword' : ' keywords');
+    const btn = document.getElementById('clusterBtn');
+    if (n < 2) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ti ti-binary-tree"></i> Enter keywords to cluster';
+    } else if (n > 50) {
+      btn.disabled = true;
+      btn.innerHTML = `<i class="ti ti-alert-triangle"></i> Too many (${n}/50 max)`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="ti ti-binary-tree"></i> Cluster ${n} keywords`;
+    }
+  }
+
+  function clearCluster() {
+    document.getElementById('clusterKws').value = '';
+    document.getElementById('cluster-results').innerHTML = '';
+    updateKwCount();
+  }
+
+  /* ── DEMO MODE ──
+     Real DataForSEO SERP data pulled and verified 2026-07-08 (see _overview.md).
+     Runs the exact render/brief path live data uses, but makes ZERO API calls —
+     safe to leave public even when /api/cluster is locked behind auth. */
+  const DEMO_DATA = {
+    meta: { keyword_count: 5, cluster_count: 4, threshold: 2, location_name: 'United States', language_code: 'en', est_cost_usd: 0.0105 },
+    clusters: [
+      {
+        primary: 'how to grow tomatoes', intent: 'informational',
+        features: ['ai_overview', 'people_also_ask', 'video', 'perspectives'],
+        keywords: [
+          { keyword: 'how to grow tomatoes', volume: 74000, difficulty: 38, intent: 'informational', urlCount: 7 },
+          { keyword: 'when to plant tomatoes', volume: 27100, difficulty: 29, intent: 'informational', urlCount: 6 }
+        ],
+        shared_urls: [
+          'themakermakes.com/blog/growing-tomatoes-for-beginners',
+          'extensiongardener.ces.ncsu.edu/news/growing-tomatoes-at-home'
+        ]
+      },
+      {
+        primary: 'growing tomatoes in containers', intent: 'informational',
+        features: ['ai_overview', 'people_also_ask', 'video', 'short_videos', 'perspectives'],
+        keywords: [ { keyword: 'growing tomatoes in containers', volume: 18100, difficulty: 24, intent: 'informational', urlCount: 6 } ],
+        shared_urls: []
+      },
+      {
+        primary: 'best fertilizer for tomatoes', intent: 'commercial',
+        features: ['ai_overview', 'people_also_ask', 'video', 'popular_products', 'perspectives'],
+        keywords: [ { keyword: 'best fertilizer for tomatoes', volume: 9900, difficulty: 41, intent: 'commercial', urlCount: 7 } ],
+        shared_urls: []
+      },
+      {
+        primary: 'tomato companion plants', intent: 'informational',
+        features: ['ai_overview', 'people_also_ask', 'images', 'perspectives'],
+        keywords: [ { keyword: 'tomato companion plants', volume: 14800, difficulty: 27, intent: 'informational', urlCount: 7 } ],
+        shared_urls: []
+      }
+    ]
+  };
+  const DEMO_BRIEFS = [
+`**Working title:** When Can You Grow Tomatoes? The Complete Planting & Growing Timing Guide
+
+**Search intent:** Informational — readers want a clear answer on timing plus core growing steps in one place.
+
+**Recommended angle:** Competitors split "how to grow" and "when to plant" into separate thin pages. Google's own ranking overlap (2 shared URLs) shows searchers treat these as one journey. Merge them: lead with a timing-first framework (frost dates → nighttime temps → transplant window) that most competitors bury halfway down.
+
+**H2/H3 outline:**
+- When to Plant Tomatoes (by frost date, by zone)
+- Choosing Determinate vs. Indeterminate
+- Planting & Spacing (depth, stem-burying technique)
+- Care Timeline: Watering, Support, Fertilizing
+- Common Timing Mistakes
+
+**Entities & subtopics:** frost date, USDA hardiness zone, determinate/indeterminate, transplant shock, hardening off.
+
+**Internal-link notes:** link out to a dedicated container-growing page and a fertilizer page — don't fold those in, they're separate intents (see other clusters).`,
+`**Working title:** Growing Tomatoes in Containers: The Complete Setup Guide
+
+**Search intent:** Informational — pot size, soil, and setup decisions specific to container growing.
+
+**Recommended angle:** Most ranking pages treat this as a footnote of general tomato care. Own the container-specific decisions (pot size math, drainage, self-watering vs. manual) as the whole page.
+
+**H2/H3 outline:**
+- Choosing Pot Size (by variety)
+- Soil & Drainage Setup
+- Planting & Support in Containers
+- Watering Schedule for Pots
+- Container-Specific Troubleshooting
+
+**Entities & subtopics:** grow bags, 5–10 gallon containers, drainage holes, potting mix vs. garden soil.
+
+**Internal-link notes:** link to the general "how to grow" pillar for the parts that don't differ (sunlight, disease) rather than repeating them.`,
+`**Working title:** Best Fertilizer for Tomatoes: NPK Ratios, Brands & When to Feed
+
+**Search intent:** Commercial — buyers comparing products, expect direct recommendations.
+
+**Recommended angle:** SERP shows shopping results and product carousels — this page needs clear product picks with the "why" (NPK ratio, organic vs. synthetic), not just growing advice.
+
+**H2/H3 outline:**
+- What NPK Ratio Tomatoes Actually Need
+- Granular vs. Liquid Feed
+- Top Picks by Use Case (organic, budget, fast-acting)
+- Feeding Schedule
+- Signs of Over/Under-Fertilizing
+
+**Entities & subtopics:** NPK ratio, blossom-end rot, calcium, phosphorus, side-dressing.
+
+**Internal-link notes:** link from the main growing-guide page's fertilizing section straight here — don't duplicate feeding advice there.`,
+`**Working title:** The Best (and Worst) Tomato Companion Plants
+
+**Search intent:** Informational — readers want a scannable list with reasoning, not just names.
+
+**Recommended angle:** Top results already do "best + worst" — match that structure but differentiate with a quick-reference chart up top (most competitors bury the list in prose).
+
+**H2/H3 outline:**
+- Quick-Reference Chart: Plant, Benefit, Distance
+- Best Companions (flowers, herbs, vegetables, alliums)
+- Plants to Avoid & Why
+- Sample Layout Diagram
+
+**Entities & subtopics:** marigolds, basil, nematodes, nightshade family, blight.
+
+**Internal-link notes:** cross-link to the container-growing page for readers planning small-space companion setups.`
+  ];
+
+  function loadClusterDemo() {
+    document.getElementById('clusterKws').value = DEMO_DATA.clusters.flatMap(c => c.keywords.map(k => k.keyword)).join('\n');
+    updateKwCount();
+    document.getElementById('clusterThresh').value = DEMO_DATA.meta.threshold;
+    document.getElementById('threshVal').textContent = DEMO_DATA.meta.threshold;
+    renderClusters(DEMO_DATA, true);
+    showToast('Loaded demo data — no API call made');
+  }
+
+  async function runCluster() {
+    const keywords = getKeywordList();
+    if (keywords.length < 2) return;
+    const btn = document.getElementById('clusterBtn');
+    const results = document.getElementById('cluster-results');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader"></i> Fetching SERPs & clustering…';
+    results.innerHTML = '<div class="card"><div style="color:var(--text-tertiary);font-size:13px;">Pulling live SERPs from DataForSEO…</div></div>';
+    try {
+      const res = await fetch('/api/cluster', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          keywords,
+          location_name: document.getElementById('clusterLoc').value.trim() || 'United States',
+          language_code: document.getElementById('clusterLang').value.trim() || 'en',
+          threshold: parseInt(document.getElementById('clusterThresh').value, 10),
+          enrich: !document.getElementById('clusterEnrich').classList.contains('off')
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Clustering failed.');
+      renderClusters(data);
+    } catch (e) {
+      results.innerHTML = `<div class="card"><div style="color:#e5484d;font-size:13px;">${escHtml(e.message)}</div></div>`;
+    } finally {
+      updateKwCount();
+    }
+  }
+
+  function volBadge(v) {
+    if (v == null) return '<span style="color:var(--text-tertiary)">—</span>';
+    return v.toLocaleString() + '<span style="color:var(--text-tertiary);font-size:11px;"> vol</span>';
+  }
+  function kdBadge(kd) {
+    if (kd == null) return '';
+    const color = kd >= 60 ? '#e5484d' : kd >= 30 ? '#f5a623' : '#30a46c';
+    return ` · <span style="color:${color};font-size:11px;">KD ${kd}</span>`;
+  }
+
+  function renderClusters(data, isDemo) {
+    const m = data.meta || {};
+    const banner = isDemo ? `<div class="card" style="border:1px solid var(--accent);margin-bottom:12px;">
+        <div style="font-size:13px;display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-player-play" style="color:var(--accent);"></i>
+          <span><strong>Demo data</strong> — real SERP results from a live DataForSEO run (2026-07-08), replayed here. No API call, no cost.</span>
+        </div>
+      </div>` : '';
+    let html = banner + `<div class="card">
+      <div class="card-title">Results</div>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+        <strong>${m.keyword_count}</strong> keywords → <strong>${m.cluster_count}</strong> clusters
+        (= ${m.cluster_count} page${m.cluster_count === 1 ? '' : 's'} to write) ·
+        threshold ${m.threshold} · ${escHtml(m.location_name)} / ${escHtml(m.language_code)} ·
+        <span style="color:var(--text-tertiary)">est. cost $${m.est_cost_usd}</span>
+      </div>
+    </div>`;
+
+    data.clusters.forEach((c, i) => {
+      const multi = c.keywords.length > 1;
+      const rows = c.keywords.map(k => `
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">
+          <span>${escHtml(k.keyword)}${k.keyword === c.primary ? ' <span style="font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:1px 5px;">PRIMARY</span>' : ''}</span>
+          <span style="white-space:nowrap;">${volBadge(k.volume)}${kdBadge(k.difficulty)}</span>
+        </div>`).join('');
+
+      const shared = (c.shared_urls || []).length
+        ? `<div style="margin-top:10px;font-size:12px;color:var(--text-tertiary);">
+             <strong>Shared ranking URLs (${c.shared_urls.length}):</strong><br>${c.shared_urls.map(u => escHtml(u)).join('<br>')}
+           </div>` : '';
+      const feats = (c.features || []).length
+        ? `<div style="margin-top:8px;">${c.features.map(f => `<span style="font-size:10px;background:var(--bg-secondary);border-radius:4px;padding:2px 6px;margin-right:4px;color:var(--text-tertiary);">${escHtml(f)}</span>`).join('')}</div>` : '';
+
+      html += `<div class="card" style="margin-top:12px;" id="cluster-card-${i}">
+        <div class="card-title" style="align-items:flex-start;">
+          <span>Cluster ${i + 1}: ${escHtml(c.primary)}${c.intent ? ` <span style="font-size:11px;color:var(--text-tertiary);font-weight:400;">(${escHtml(c.intent)})</span>` : ''}</span>
+          <span style="font-size:11px;color:var(--text-tertiary);font-weight:400;">${c.keywords.length} kw</span>
+        </div>
+        ${rows}
+        ${feats}
+        ${shared}
+        <button class="btn-secondary" style="margin-top:12px;" onclick='generateBrief(${i}, ${JSON.stringify(c).replace(/'/g, "&#39;")}, ${!!isDemo})'>
+          <i class="ti ti-sparkles"></i> Generate SEO brief
+        </button>
+        <div id="brief-${i}" style="margin-top:12px;"></div>
+      </div>`;
+    });
+
+    document.getElementById('cluster-results').innerHTML = html;
+  }
+
+  async function generateBrief(i, cluster, isDemo) {
+    const target = document.getElementById('brief-' + i);
+    if (isDemo) {
+      const brief = DEMO_BRIEFS[i] || '_No canned brief for this demo cluster._';
+      target.innerHTML = `<div style="background:var(--bg-secondary);border-radius:8px;padding:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;">${escHtml(brief)}</div>
+        <p style="font-size:11px;color:var(--text-tertiary);margin-top:6px;">Pre-written demo brief — live mode generates this per-cluster with Claude.</p>`;
+      return;
+    }
+    target.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);">Writing brief…</div>';
+    const kwLines = cluster.keywords.map(k => `- ${k.keyword}${k.volume != null ? ` (${k.volume} vol${k.difficulty != null ? `, KD ${k.difficulty}` : ''})` : ''}`).join('\n');
+    const system = 'You are an SEO content strategist. Write a tight, practical content brief for a SINGLE page that can rank for a cluster of keywords sharing the same search intent. Be specific and skip filler. Use markdown with short sections: Working title, Search intent, Recommended angle (what unique value beats what already ranks), H2/H3 outline, Entities & subtopics to cover, and Internal-link notes.';
+    const user = `Primary keyword: ${cluster.primary}\nDetected intent: ${cluster.intent || 'unknown'}\nSERP features present: ${(cluster.features || []).join(', ') || 'none'}\n\nAll keywords this one page should target:\n${kwLines}\n\nPages currently ranking for the whole group (the competition to beat):\n${(cluster.shared_urls || []).join('\n') || '(distinct SERPs — see individual keywords)'}`;
+    try {
+      const out = await callClaude([{ role: 'user', content: user }], system, 2000);
+      target.innerHTML = `<div style="background:var(--bg-secondary);border-radius:8px;padding:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;">${escHtml(out)}</div>`;
+    } catch (e) {
+      target.innerHTML = `<div style="color:#e5484d;font-size:13px;">${escHtml(e.message)}</div>`;
+    }
+  }
+
+  /* Apply the saved theme (or OS default) as soon as the script runs. */
+  applyStoredTheme();
+</script>
+</body>
+</html>
